@@ -15,7 +15,11 @@ import { TestContractHandler } from '../../TestContractHandler'
 import { NftFactory, NftCreateData } from '../../../src/factories/NFTFactory'
 import { Datatoken, Nft, OrderParams, DispenserParams } from '../../../src/tokens'
 import { AbiItem } from 'web3-utils'
-import { FreCreationParams, FreOrderParams } from '../../../src/interfaces'
+import {
+  FreCreationParams,
+  FreOrderParams,
+  PoolCreationParams
+} from '../../../src/interfaces'
 
 const web3 = new Web3('http://127.0.0.1:8545')
 
@@ -159,6 +163,40 @@ describe('Datatoken', () => {
     fixedRateAddress = fre.events.NewFixedRate.address
     exchangeId = fre.events.NewFixedRate.returnValues[0]
   })
+
+  // it('#deployPool - should create deploy a pool for the erc20 dt', async () => {
+  //   const poolDatatokenAddress = await nftDatatoken.createErc20(
+  //     nftAddress,
+  //     nftOwner,
+  //     nftOwner,
+  //     user1,
+  //     user2,
+  //     '0x0000000000000000000000000000000000000000',
+  //     '0',
+  //     '10000',
+  //     nftName,
+  //     nftSymbol,
+  //     1
+  //   )
+  //   await datatoken.mint(poolDatatokenAddress, nftOwner, '10', user1)
+  //   const poolParams: PoolCreationParams = {
+  //     ssContract: contractHandler.sideStakingAddress,
+  //     basetokenAddress: contractHandler.daiAddress,
+  //     basetokenSender: contractHandler.factory721Address,
+  //     publisherAddress: contractHandler.accounts[0],
+  //     marketFeeCollector: contractHandler.accounts[0],
+  //     poolTemplateAddress: contractHandler.poolTemplateAddress,
+  //     rate: '1',
+  //     basetokenDecimals: 18,
+  //     vestingAmount: '1',
+  //     vestedBlocks: 2500000,
+  //     initialBasetokenLiquidity: '2000',
+  //     swapFeeLiquidityProvider: 1e15,
+  //     swapFeeMarketPlaceRunner: 1e15
+  //   }
+  //   const pool = await datatoken.deployPool(poolDatatokenAddress, nftOwner, poolParams)
+  //   assert(pool !== null)
+  // })
 
   it('#createDispenser - method creates a dispenser for the erc20DT', async () => {
     const dispenserParams: DispenserParams = {

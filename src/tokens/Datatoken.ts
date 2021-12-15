@@ -5,8 +5,8 @@ import { Contract } from 'web3-eth-contract'
 import Decimal from 'decimal.js'
 import defaultDatatokensAbi from '@oceanprotocol/contracts/artifacts/contracts/templates/ERC20Template.sol/ERC20Template.json'
 import defaultDatatokensEnterpriseAbi from '@oceanprotocol/contracts/artifacts/contracts/templates/ERC20TemplateEnterprise.sol/ERC20TemplateEnterprise.json'
-import { LoggerInstance, getFairGasPrice } from '../utils'
-import { FreOrderParams, FreCreationParams } from '../interfaces'
+import { LoggerInstance, getFairGasPrice, getPoolCreationParams } from '../utils'
+import { FreOrderParams, FreCreationParams, PoolCreationParams } from '../interfaces'
 
 /**
  * ERC20 ROLES
@@ -256,6 +256,66 @@ export class Datatoken {
           withMint
         ]
       )
+      .send({
+        from: address,
+        gas: estGas + 1,
+        gasPrice: await getFairGasPrice(this.web3)
+      })
+    return trxReceipt
+  }
+
+  /**
+   * Estimate gas cost for estGasDeployPool method
+   * @param {String} dtAddress Datatoken address
+   * @param {String} address Caller address
+   * @param {PoolCreationParams} poolParams
+   * @param {Contract} contractInstance optional contract instance
+   * @return {Promise<any>}
+   */
+  public async estGasDeployPool(
+    dtAddress: string,
+    address: string,
+    poolParams: PoolCreationParams,
+    contractInstance?: Contract
+  ): Promise<any> {
+    const dtContract =
+      contractInstance || new this.web3.eth.Contract(this.datatokensAbi, dtAddress)
+
+    const poolData = getPoolCreationParams(poolParams, this.web3)
+
+    const gasLimitDefault = this.GASLIMIT_DEFAULT
+    let estGas
+    try {
+      estGas = await dtContract.methods
+        .deployPool(poolData.ssParams, poolData.swapFees, poolData.addresses)
+        .estimateGas({ from: address }, (err, estGas) => (err ? gasLimitDefault : estGas))
+    } catch (e) {
+      estGas = gasLimitDefault
+    }
+
+    return estGas
+  }
+
+  /**
+   * Creates a new Dispenser
+   * @param {String} dtAddress Datatoken address
+   * @param {String} address Caller address
+   * @param {PoolCreationParams} dispenserParams
+   * @return {Promise<TransactionReceipt>} transactionId
+   */
+  public async deployPool(
+    dtAddress: string,
+    address: string,
+    poolParams: PoolCreationParams
+  ): Promise<TransactionReceipt> {
+    const dtContract = new this.web3.eth.Contract(this.datatokensAbi, dtAddress)
+    const poolData = getPoolCreationParams(poolParams, this.web3)
+
+    const estGas = await this.estGasDeployPool(dtAddress, address, poolParams, dtContract)
+
+    // Call deployPool contract method
+    const trxReceipt = await dtContract.methods
+      .deployPool(poolData.ssParams, poolData.swapFees, poolData.addresses)
       .send({
         from: address,
         gas: estGas + 1,
