@@ -1,3 +1,6 @@
+/**
+ * Contains information of a blockchain event
+ */
 export interface Event {
   /**
    * TX id of the last create/update
