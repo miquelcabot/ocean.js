@@ -4,17 +4,18 @@ import fetch from 'cross-fetch'
 export class Aquarius {
   public aquariusURL
   /**
-   * Instantiate Aquarius
-   * @param {String} aquariusURL
+   * Create a new instance of Aquarius
+   * @param {String} aquariusURL URL of the Aquarius service
    */
   constructor(aquariusURL: string) {
     this.aquariusURL = aquariusURL
   }
 
-  /** Resolves a DID
-   * @param {string} did
-   * @param {AbortSignal} signal abort signal
-   * @return {Promise<Asset>} Asset
+  /**
+   * Resolves a DID, returning its identified asset
+   * @param {string} did DID (Decentralized ID) of the asset
+   * @param {AbortSignal} signal Abort signal
+   * @return {Promise<Asset>} Asset identified by the provided DID
    */
   public async resolve(did: string, signal?: AbortSignal): Promise<Asset> {
     const path = this.aquariusURL + '/api/aquarius/assets/ddo/' + did
@@ -40,12 +41,11 @@ export class Aquarius {
   }
 
   /**
-   * Blocks until Aqua will cache the did (or the update for that did) or timeouts
-   
-   * @param {string} did DID of the asset.
-   * @param {string} txid used when the did exists and we expect an update with that txid.
-     * @param {AbortSignal} signal abort signal
-   * @return {Promise<DDO>} DDO of the asset.
+   * Wait until Aquarius caches the DID (or the update for that DID) or timeouts
+   * @param {string} did DID (Decentralized ID) of the asset
+   * @param {string} txid Transaction ID used when the DID exists and we expect an update with that txid.
+   * @param {AbortSignal} signal Abort signal
+   * @return {Promise<DDO>} DDO (DID Descriptor Object) of the asset
    */
   public async waitForAqua(
     did: string,
@@ -81,9 +81,9 @@ export class Aquarius {
 
   /**
    * Validate DDO content
-   * @param {DDO} ddo DID Descriptor Object content.
-   * @param {AbortSignal} signal abort signal
-   * @return {Promise<ValidateMetadata>}.
+   * @param {DDO} ddo DID Descriptor Object content
+   * @param {AbortSignal} signal Abort signal
+   * @return {Promise<ValidateMetadata>} Metadata returned from the validation of the DDO
    */
   public async validate(ddo: DDO, signal?: AbortSignal): Promise<ValidateMetadata> {
     const status: ValidateMetadata = {
