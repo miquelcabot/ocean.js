@@ -10,7 +10,7 @@ export class Aquarius {
 
   /**
    * Create a new instance of an Aquarius interface
-   * @param {String} aquariusURL URL of the Aquarius service
+   * @param {string} aquariusURL URL of the Aquarius service
    */
   constructor(aquariusURL: string) {
     this.aquariusURL = aquariusURL
@@ -50,7 +50,7 @@ export class Aquarius {
    * @param {string} did DID (Decentralized ID) of the asset
    * @param {string} txid Transaction ID used when the DID exists and we expect an update with that txid.
    * @param {AbortSignal} signal Abort signal
-   * @return {Promise<DDO>} DDO (DID Descriptor Object) of the asset
+   * @return {Promise<Asset>} Asset identified by the provided DID
    */
   public async waitForAqua(
     did: string,
