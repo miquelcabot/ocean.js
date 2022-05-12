@@ -16,7 +16,7 @@ export class Aquarius {
   }
 
   /**
-   * Resolves a DID, returning its identified asset
+   * Resolve a DID, returning its identified asset
    * @param {string} did DID (Decentralized ID) of the asset
    * @param {AbortSignal} signal Abort signal
    * @return {Promise<Asset>} Asset identified by the provided DID
