@@ -1,33 +1,36 @@
 import { LogLevel } from '../utils/Logger'
 import { AbiItem } from 'web3-utils/types'
 
+/**
+ * Stores all the configuration for the ocean.js library
+ */
 export class Config {
   /**
-   * Ethereum node URL.
+   * Ethereum node URL
    * @type {string}
    */
   public nodeUri?: string
 
   /**
-   * Address of Provider.
+   * Address of Provider
    * @type {string}
    */
   public providerAddress?: string
 
   /**
-   * Metadata Store URL.
+   * Metadata Store URL
    * @type {string}
    */
   public metadataCacheUri?: string
 
   /**
-   * Provider URL.
+   * Provider URL
    * @type {string}
    */
   public providerUri?: string
 
   /**
-   * Web3 Provider.
+   * Web3 Provider
    * @type {any}
    */
   public web3Provider?: any
@@ -51,13 +54,13 @@ export class Config {
   public erc721FFactoryABI?: AbiItem | AbiItem[]
 
   /**
-   * datatokens ABI
+   * Datatokens ABI
    * @type {string}
    */
   public datatokensABI?: AbiItem | AbiItem[]
 
   /**
-   * Pool Template address
+   * Pool template address
    * @type {string}
    */
   public poolTemplateAddress?: string
@@ -75,31 +78,31 @@ export class Config {
   public poolABI?: AbiItem | AbiItem[]
 
   /**
-   * FixedRateExchangeAddress
+   * Fixed Rate Exchange address
    * @type {string}
    */
   public fixedRateExchangeAddress?: string
 
   /**
-   * FixedRateExchangeAddressABI
+   * Fixed Rate Exchange ABI
    * @type {any}
    */
   public fixedRateExchangeAddressABI?: AbiItem | AbiItem[]
 
   /**
-   * DispenserAddress
+   * Dispenser address
    * @type {string}
    */
   public dispenserAddress?: string
 
   /**
-   * DispenserABI
+   * Dispenser ABI
    * @type {any}
    */
   public dispenserABI?: AbiItem | AbiItem[]
 
   /**
-   * OPFCommunityFeeCollector
+   * OPFCommunityFeeCollector address
    * @type {string}
    */
   public opfCommunityFeeCollector?: string
@@ -111,18 +114,19 @@ export class Config {
   public sideStakingAddress?: string
 
   /**
-   * block number of the deployment
+   * Block number of the deployment
    * @type {number}
    */
   public startBlock?: number
+
   /**
-   * Log level.
+   * Log level
    * @type {boolean | LogLevel}
    */
   public verbose?: boolean | LogLevel
 
   /**
-   * Message shown when the user creates its own token.
+   * Message shown when the user creates its own token
    * @type {string}
    */
   public authMessage?: string
@@ -139,6 +143,10 @@ export class Config {
    */
   public parityUri?: string
 
+  /**
+   * Threshold
+   * @type {number}
+   */
   public threshold?: number
 
   /**
