@@ -7,6 +7,7 @@ import fetch from 'cross-fetch'
  */
 export class Aquarius {
   public aquariusURL
+
   /**
    * Create a new instance of Aquarius
    * @param {String} aquariusURL URL of the Aquarius service
