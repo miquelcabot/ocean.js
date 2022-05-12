@@ -47,7 +47,7 @@ export interface NftCreateData {
 }
 
 /**
- * Provides an interface for NFT Factory contract
+ * Provides an interface to the NFT Factory smart contract
  */
 export class NftFactory {
   public GASLIMIT_DEFAULT = 1000000
@@ -58,10 +58,12 @@ export class NftFactory {
   public factory721: Contract
 
   /**
-   * Instantiate Datatokens.
-   * @param {String} factory721Address
-   * @param {AbiItem | AbiItem[]} factory721ABI
-   * @param {Web3} web3
+   * Create a new instance of an interface to the NFT Factory smart contract
+   * @param {string} factory721Address Address of the NFT Factory smart contract
+   * @param {Web3} web3 Web3 instance
+   * @param {string | number} network Name of the network or network id
+   * @param {AbiItem | AbiItem[]} factory721ABI ABI of the NFT Factory smart contract
+   * @param {Config} config Instance of a configuration object
    */
   constructor(
     factory721Address: string,
@@ -81,10 +83,10 @@ export class NftFactory {
   }
 
   /**
-   * Get estimated gas cost for deployERC721Contract value
-   * @param {String} address
-   * @param {String} nftData
-   * @return {Promise<string>} NFT datatoken address
+   * Get estimated gas cost for create an NFT
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftData Data of the NFT to be created
+   * @return {Promise<string>} Estimated gas cost
    */
   public async estGasCreateNFT(address: string, nftData: NftCreateData): Promise<string> {
     const gasLimitDefault = this.GASLIMIT_DEFAULT
@@ -109,10 +111,10 @@ export class NftFactory {
   }
 
   /**
-   * Create new NFT
-   * @param {String} address
-   * @param {NFTCreateData} nftData
-   * @return {Promise<string>} NFT datatoken address
+   * Create a new NFT
+   * @param {string} address User address which calls the function
+   * @param {NFTCreateData} nftData Data of the NFT to be created
+   * @return {Promise<string>} Address of the created NFT
    */
   public async createNFT(address: string, nftData: NftCreateData): Promise<string> {
     if (!nftData.templateIndex) nftData.templateIndex = 1
@@ -161,49 +163,55 @@ export class NftFactory {
     return tokenAddress
   }
 
-  /** Get Current NFT Count (NFT created)
-   * @return {Promise<number>} Number of NFT created from this factory
+  /**
+   * Get current NFT count (created NFTs)
+   * @return {Promise<number>} Number of created NFTs from this factory
    */
   public async getCurrentNFTCount(): Promise<number> {
     const trxReceipt = await this.factory721.methods.getCurrentNFTCount().call()
     return trxReceipt
   }
 
-  /** Get Current Datatoken Count
-   * @return {Promise<number>} Number of DTs created from this factory
+  /**
+   * Get current Datatoken count
+   * @return {Promise<number>} Number of datatokens created from this factory
    */
   public async getCurrentTokenCount(): Promise<number> {
     const trxReceipt = await this.factory721.methods.getCurrentTokenCount().call()
     return trxReceipt
   }
 
-  /** Get Factory Owner
-   * @return {Promise<string>} Factory Owner address
+  /**
+   * Get Factory owner
+   * @return {Promise<string>} Factory owner address
    */
   public async getOwner(): Promise<string> {
     const trxReceipt = await this.factory721.methods.owner().call()
     return trxReceipt
   }
 
-  /** Get Current NFT Template Count
-   * @return {Promise<number>} Number of NFT Template added to this factory
+  /**
+   * Get current NFT (ERC721) templates count
+   * @return {Promise<number>} Number of NFT templates added to this factory
    */
   public async getCurrentNFTTemplateCount(): Promise<number> {
     const count = await this.factory721.methods.getCurrentNFTTemplateCount().call()
     return count
   }
 
-  /** Get Current Template  Datatoken (ERC20) Count
-   * @return {Promise<number>} Number of ERC20 Template added to this factory
+  /**
+   * Get current Datatoken (ERC20) templates count
+   * @return {Promise<number>} Number of ERC20 datatoken templates added to this factory
    */
   public async getCurrentTokenTemplateCount(): Promise<number> {
     const count = await this.factory721.methods.getCurrentTemplateCount().call()
     return count
   }
 
-  /** Get NFT Template
-   * @param {Number} index Template index
-   * @return {Promise<Template>} Number of Template added to this factory
+  /**
+   * Get NFT template
+   * @param {number} index Template index
+   * @return {Promise<Template>} NFT template info
    */
   public async getNFTTemplate(index: number): Promise<Template> {
     if (index > (await this.getCurrentNFTTemplateCount())) {
@@ -217,27 +225,30 @@ export class NftFactory {
     return template
   }
 
-  /** Get Datatoken(erc20) Template
-   * @param {Number} index Template index
-   * @return {Promise<Template>} DT Template info
+  /**
+   * Get Datatoken (ERC20) template
+   * @param {number} index Template index
+   * @return {Promise<Template>} Datatoken template info
    */
   public async getTokenTemplate(index: number): Promise<Template> {
     const template = await this.factory721.methods.getTokenTemplate(index).call()
     return template
   }
 
-  /** Check if ERC20 is deployed from the factory
-   * @param {String} datatoken Datatoken address we want to check
-   * @return {Promise<Boolean>} return true if deployed from this factory
+  /**
+   * Check if an ERC20 Datatoken is deployed from the factory
+   * @param {string} datatoken Datatoken address we want to check
+   * @return {Promise<Boolean>} Return true if deployed from this factory
    */
   public async checkDatatoken(datatoken: string): Promise<Boolean> {
     const isDeployed = await this.factory721.methods.erc20List(datatoken).call()
     return isDeployed
   }
 
-  /** Check if  NFT is deployed from the factory
-   * @param {String} nftAddress nftAddress address we want to check
-   * @return {Promise<String>} return address(0) if it's not, or the nftAddress if true
+  /**
+   * Check if an NFT is deployed from the factory
+   * @param {string} nftAddress NFT address we want to check
+   * @return {Promise<String>} Return NFT address if deployed from this factory, or address(0) if not
    */
   public async checkNFT(nftAddress: string): Promise<String> {
     const confirmAddress = await this.factory721.methods.erc721List(nftAddress).call()
@@ -245,10 +256,10 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for add721TokenTemplate method
-   * @param {String} address
-   * @param {String} templateAddress template address to add
-   * @return {Promise<TransactionReceipt>}
+   * Estimate gas cost for add a new NFT template
+   * @param {string} address User address which calls the function
+   * @param {string} templateAddress Template address to add
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasAddNFTTemplate(
     address: string,
@@ -267,10 +278,10 @@ export class NftFactory {
   }
 
   /**
-   * Add a new erc721 token template - only factory Owner
-   * @param {String} address
-   * @param {String} templateAddress template address to add
-   * @return {Promise<TransactionReceipt>}
+   * Add a new NFT template
+   * @param {string} address User address which calls the function
+   * @param {string} templateAddress Template address to add
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async addNFTTemplate(
     address: string,
@@ -298,10 +309,10 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for disable721TokenTemplate method
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to disable
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Estimate gas cost for disable an NFT template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to disable
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasDisableNFTTemplate(
     address: string,
@@ -320,10 +331,10 @@ export class NftFactory {
   }
 
   /**
-   * Disable token template - only factory Owner
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to disable
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Disable an NFT template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to disable
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async disableNFTTemplate(
     address: string,
@@ -354,10 +365,10 @@ export class NftFactory {
   }
 
   /**
-   * Reactivate a previously disabled token template - only factory Owner
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to reactivate
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Estimate gas cost for reactivate a previously disabled NFT template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to reactivate
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasReactivateNFTTemplate(
     address: string,
@@ -376,10 +387,10 @@ export class NftFactory {
   }
 
   /**
-   * Reactivate a previously disabled token template - only factory Owner
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to reactivate
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Reactivate a previously disabled NFT template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to reactivate
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async reactivateNFTTemplate(
     address: string,
@@ -411,10 +422,10 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for addTokenTemplate method
-   * @param {String} address
-   * @param {String} templateAddress template address to add
-   * @return {Promise<TransactionReceipt>}
+   * Get estimated gas cost for add a Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {string} templateAddress Template address to add
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasAddTokenTemplate(
     address: string,
@@ -434,10 +445,10 @@ export class NftFactory {
   }
 
   /**
-   * Add a new erc721 token template - only factory Owner
-   * @param {String} address
-   * @param {String} templateAddress template address to add
-   * @return {Promise<TransactionReceipt>}
+   * Add a Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {string} templateAddress Template address to add
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async addTokenTemplate(
     address: string,
@@ -465,10 +476,10 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for disableTokenTemplate method
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to disable
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Get estimated gas cost for disable a Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to disable
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasDisableTokenTemplate(
     address: string,
@@ -487,10 +498,10 @@ export class NftFactory {
   }
 
   /**
-   * Disable token template - only factory Owner
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to disable
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Disable a Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to disable
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async disableTokenTemplate(
     address: string,
@@ -524,10 +535,10 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for reactivateTokenTemplate method
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to reactivate
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Get estimated gas cost for reactivate a previously disabled Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to reactivate
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasReactivateTokenTemplate(
     address: string,
@@ -546,10 +557,10 @@ export class NftFactory {
   }
 
   /**
-   * Reactivate a previously disabled token template - only factory Owner
-   * @param {String} address
-   * @param {Number} templateIndex index of the template we want to reactivate
-   * @return {Promise<TransactionReceipt>} current token template count
+   * Reactivate a previously disabled Datatoken template
+   * @param {string} address User address which calls the function
+   * @param {number} templateIndex Index of the template we want to reactivate
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async reactivateTokenTemplate(
     address: string,
@@ -583,10 +594,11 @@ export class NftFactory {
     return trxReceipt
   }
 
-  /** Estimate gas cost for startMultipleTokenOrder method
-   * @param address Caller address
-   * @param orders an array of struct tokenOrder
-   * @return {Promise<TransactionReceipt>} transaction receipt
+  /**
+   * Get estimated gas cost for start a multiple token order
+   * @param {string} address User address which calls the function
+   * @param {TokenOrder[]} orders Array of struct TokenOrder with the information of the orders
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasStartMultipleTokenOrder(
     address: string,
@@ -605,16 +617,16 @@ export class NftFactory {
   }
 
   /**
-   * @dev startMultipleTokenOrder
-   *      Used as a proxy to order multiple services
-   *      Users can have inifinite approvals for fees for factory instead of having one approval/ erc20 contract
-   *      Requires previous approval of all :
-   *          - consumeFeeTokens
-   *          - publishMarketFeeTokens
-   *          - erc20 datatokens
-   * @param address Caller address
-   * @param orders an array of struct tokenOrder
-   * @return {Promise<TransactionReceipt>} transaction receipt
+   * Start a multiple token order.
+   * Used as a proxy to order multiple services.
+   * Users can have inifinite approvals for fees for factory instead of having one approval/ erc20 contract.
+   * Requires previous approval of all :
+   *   - consumeFeeTokens
+   *   - publishMarketFeeTokens
+   *   - erc20 datatokens
+   * @param {string} address User address which calls the function
+   * @param {TokenOrder[]} orders Array of struct TokenOrder with the information of the orders
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async startMultipleTokenOrder(
     address: string,
@@ -639,13 +651,12 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for createNftWithErc20 method
-   * @param address Caller address
-   * @param _NftCreateData input data for nft creation
-   * @param _ErcCreateData input data for erc20 creation
-   *  @return {Promise<TransactionReceipt>} transaction receipt
+   * Get estimated gas cost for create an NFT with an ERC20 Datatoken
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} _NftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} _ErcCreateData Data of the new ERC20 Datatoken to be created
+   * @return {Promise<any>} Estimated gas cost
    */
-
   public async estGasCreateNftWithErc20(
     address: string,
     nftCreateData: NftCreateData,
@@ -666,14 +677,12 @@ export class NftFactory {
   }
 
   /**
-   * @dev createNftWithErc20
-   *      Creates a new NFT, then a ERC20,all in one call
-   * @param address Caller address
-   * @param _NftCreateData input data for nft creation
-   * @param _ErcCreateData input data for erc20 creation
-   * @return {Promise<TransactionReceipt>} transaction receipt
+   * Create an NFT with an ERC20 Datatoken
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} _NftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} _ErcCreateData Data of the new ERC20 Datatoken to be created
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
-
   public async createNftWithErc20(
     address: string,
     nftCreateData: NftCreateData,
@@ -695,12 +704,12 @@ export class NftFactory {
   }
 
   /**
-   * Estimate gas cost for createNftErc20WithPool method
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param poolParams input data for Pool Creation
-   * @return {Promise<TransactionReceipt>} transaction receipt
+   * Get estimated gas cost for create an NFT with an ERC20 Datatoken and a Pool
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {PoolCreationParams} poolParams Data of the new Pool to be created
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasCreateNftErc20WithPool(
     address: string,
@@ -723,14 +732,13 @@ export class NftFactory {
   }
 
   /**
-   * @dev createNftErc20WithPool
-   *      Creates a new NFT, then a ERC20, then a Pool, all in one call
-   *      Use this carefully, because if Pool creation fails, you are still going to pay a lot of gas
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param poolParams input data for Pool Creation
-   * @return {Promise<TransactionReceipt>} transaction receipt
+   * Create an NFT with an ERC20 Datatoken and a Pool.
+   * Use this carefully, because if Pool creation fails, you are still going to pay a lot of gas
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {PoolCreationParams} poolParams Data of the new Pool to be created
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async createNftErc20WithPool(
     address: string,
@@ -759,12 +767,13 @@ export class NftFactory {
     return trxReceipt
   }
 
-  /** Estimate gas cost for createNftErc20WithFixedRate method
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param freParams input data for FixedRate Creation
-   * @return {Promise<TransactionReceipt>} transaction receipt
+  /**
+   * Get estimated gas cost for create an NFT with an ERC20 Datatoken and a Fixed Rate Exchange
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {FreCreationParams} freParams Data of the new Fixed Rate Exchange to be created
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasCreateNftErc20WithFixedRate(
     address: string,
@@ -789,14 +798,13 @@ export class NftFactory {
   }
 
   /**
-   * @dev createNftErc20WithFixedRate
-   *      Creates a new NFT, then a ERC20, then a FixedRateExchange, all in one call
-   *      Use this carefully, because if Fixed Rate creation fails, you are still going to pay a lot of gas
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param freParams input data for FixedRate Creation
-   *  @return {Promise<TransactionReceipt>} transaction receipt
+   * Create an NFT with an ERC20 Datatoken and a Fixed Rate Exchange.
+   * Use this carefully, because if Fixed Rate creation fails, you are still going to pay a lot of gas
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {FreCreationParams} freParams Data of the new Fixed Rate Exchange to be created
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async createNftErc20WithFixedRate(
     address: string,
@@ -826,12 +834,13 @@ export class NftFactory {
     return trxReceipt
   }
 
-  /** Estimate gas cost for createNftErc20WithFixedRate method
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param dispenserParams input data for Dispenser Creation
-   * @return {Promise<TransactionReceipt>} transaction receipt
+  /**
+   * Get estimated gas cost for create an NFT with an ERC20 Datatoken and a Dispenser
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {DispenserCreationParams} dispenserParams Data of the new Dispenser to be created
+   * @return {Promise<any>} Estimated gas cost
    */
   public async estGasCreateNftErc20WithDispenser(
     address: string,
@@ -856,14 +865,13 @@ export class NftFactory {
   }
 
   /**
-   * @dev createNftErc20WithDispenser
-   *      Creates a new NFT, then a ERC20, then a Dispenser, all in one call
-   *      Use this carefully, because if Dispenser creation fails, you are still going to pay a lot of gas
-   * @param address Caller address
-   * @param nftCreateData input data for NFT Creation
-   * @param ercParams input data for ERC20 Creation
-   * @param dispenserParams input data for Dispenser Creation
-   *  @return {Promise<TransactionReceipt>} transaction receipt
+   * Create an NFT with an ERC20 Datatoken and a Dispenser.
+   * Use this carefully, because if Dispenser creation fails, you are still going to pay a lot of gas
+   * @param {string} address User address which calls the function
+   * @param {NftCreateData} nftCreateData Data of the NFT to be created
+   * @param {Erc20CreateParams} ercParams Data of the new ERC20 Datatoken to be created
+   * @param {DispenserCreationParams} dispenserParams Data of the new Dispenser to be created
+   * @return {Promise<TransactionReceipt>} Information of the transaction receipt
    */
   public async createNftErc20WithDispenser(
     address: string,
