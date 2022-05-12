@@ -9,7 +9,7 @@ export class Aquarius {
   public aquariusURL
 
   /**
-   * Create a new instance of Aquarius
+   * Create a new instance of an Aquarius interface
    * @param {String} aquariusURL URL of the Aquarius service
    */
   constructor(aquariusURL: string) {
